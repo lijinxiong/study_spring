@@ -7,4 +7,11 @@
         <property name="name" value="laoye"/>
         <property name="age" value="1"/>
     </bean>
+	<bean id="person" class="com.demo.Person" name="person2;person2">
+		<constructor-arg name="name" value="jx"/>
+	</bean>
+
+	<alias name="person" alias="person3"/>
+	<import resource="classpath:application1.xml"/>
+
 </beans>

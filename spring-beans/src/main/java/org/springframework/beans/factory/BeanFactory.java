@@ -21,6 +21,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 /**
+ * 这是一个顶层的接口、用它可以访问spring bean 的容器、这个是对外的一个基本的视图、可操作的外部基本接口
  * The root interface for accessing a Spring bean container.
  * This is the basic client view of a bean container;
  * further interfaces such as {@link ListableBeanFactory} and
@@ -125,13 +126,19 @@ public interface BeanFactory {
 
 
 	/**
+	 * 返回一个实例、他的scope 可能是 单例也可能是 原型
+	 * 其实就是使用spring 容器代替了 单例模式和 原型模式
+	 * 调用发可以保存单例模式的bean的引用、那么就不用每次调用这个方法来获取同一个对象了
+	 * 参数给过来的如果是别名、那么会解释成正式的bean id 之后 才会去查找bena
+	 * 如果在当前的bean factory中找不到bena、会去父类的bean factory 查找的
+	 *
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * <p>This method allows a Spring BeanFactory to be used as a replacement for the
 	 * Singleton or Prototype design pattern. Callers may retain references to
 	 * returned objects in the case of Singleton beans.
 	 * <p>Translates aliases back to the corresponding canonical bean name.
 	 * Will ask the parent factory if the bean cannot be found in this factory instance.
-	 * @param name the name of the bean to retrieve
+	 * @param name the name of the bean to retrieve 用于检索的bean id
 	 * @return an instance of the bean
 	 * @throws NoSuchBeanDefinitionException if there is no bean with the specified name
 	 * @throws BeansException if the bean could not be obtained
@@ -139,6 +146,8 @@ public interface BeanFactory {
 	Object getBean(String name) throws BeansException;
 
 	/**
+	 * 如同getBean(String) 方法一样、只是增加了一层类型检验、如果找到的bean 的类型不是参数的类型的或者其子类、
+	 * 则会抛出BeanNotOfRequiredTypeException
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * <p>Behaves the same as {@link #getBean(String)}, but provides a measure of type
 	 * safety by throwing a BeanNotOfRequiredTypeException if the bean is not of the
@@ -156,6 +165,8 @@ public interface BeanFactory {
 	<T> T getBean(String name, Class<T> requiredType) throws BeansException;
 
 	/**
+	 * 针对于是 原型的scope 吧、通过传入的构造参数 去改变原来配置的构造函数的值、如果不存在这个构造函数、就会报错
+	 * 实在想不到实际上哪里会使用到它
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * <p>Allows for specifying explicit constructor arguments / factory method arguments,
 	 * overriding the specified default arguments (if any) in the bean definition.
@@ -165,7 +176,7 @@ public interface BeanFactory {
 	 * @return an instance of the bean
 	 * @throws NoSuchBeanDefinitionException if there is no such bean definition
 	 * @throws BeanDefinitionStoreException if arguments have been given but
-	 * the affected bean isn't a prototype
+	 * the affected bean isn't a prototype 测试了一下并不会抛异常、如果是单例的话
 	 * @throws BeansException if the bean could not be created
 	 * @since 2.5
 	 */
@@ -359,6 +370,11 @@ public interface BeanFactory {
 	Class<?> getType(String name, boolean allowFactoryBeanInit) throws NoSuchBeanDefinitionException;
 
 	/**
+	 * 如果过有别名的话就返回
+	 * 所有的别名都执行同一个bean、可以通过getBean 获得同一个bean
+	 * (ps 刚刚试了下、别名也是唯一的在spring 容器中)
+	 * 如果参数给的本身就是别名、那么原来的bean id 和剩余的别名就会被返回、bean id 作为数组的第一个
+	 *
 	 * Return the aliases for the given bean name, if any.
 	 * All of those aliases point to the same bean when used in a {@link #getBean} call.
 	 * <p>If the given name is an alias, the corresponding original bean name

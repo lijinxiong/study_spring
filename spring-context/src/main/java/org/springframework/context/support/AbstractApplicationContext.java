@@ -1046,6 +1046,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	/**
+	 * 1. refresh 异常的时候
+	 * 2. 关闭spring 容器的时候
+	 * 3. refresh的时候
 	 * Template method for destroying all beans that this context manages.
 	 * The default implementation destroy all cached singletons in this context,
 	 * invoking {@code DisposableBean.destroy()} and/or the specified

@@ -15,4 +15,11 @@ public class Student {
     private int age;
 
 
+	public Student(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public Student() {
+	}
 }

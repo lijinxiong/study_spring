@@ -22,11 +22,10 @@ public class Main {
 
 
 	public static void main(String[] args) {
-
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("application.xml");
 		Student bean = applicationContext.getBean(Student.class);
+		String[] people = applicationContext.getAliases("person");
 		System.out.println(bean.toString());
-
 	}
 
 }

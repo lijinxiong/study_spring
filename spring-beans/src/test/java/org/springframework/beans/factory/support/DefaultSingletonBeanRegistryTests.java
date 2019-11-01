@@ -83,6 +83,9 @@ public class DefaultSingletonBeanRegistryTests {
 		assertThat(tb.wasDestroyed()).isTrue();
 	}
 
+	/**
+	 * 测试依赖关系
+	 */
 	@Test
 	public void testDependentRegistration() {
 		DefaultSingletonBeanRegistry beanRegistry = new DefaultSingletonBeanRegistry();
@@ -90,10 +93,14 @@ public class DefaultSingletonBeanRegistryTests {
 		beanRegistry.registerDependentBean("a", "b");
 		beanRegistry.registerDependentBean("b", "c");
 		beanRegistry.registerDependentBean("c", "b");
+
+
 		assertThat(beanRegistry.isDependent("a", "b")).isTrue();
 		assertThat(beanRegistry.isDependent("b", "c")).isTrue();
 		assertThat(beanRegistry.isDependent("c", "b")).isTrue();
 		assertThat(beanRegistry.isDependent("a", "c")).isTrue();
+
+
 		assertThat(beanRegistry.isDependent("c", "a")).isFalse();
 		assertThat(beanRegistry.isDependent("b", "a")).isFalse();
 		assertThat(beanRegistry.isDependent("a", "a")).isFalse();
