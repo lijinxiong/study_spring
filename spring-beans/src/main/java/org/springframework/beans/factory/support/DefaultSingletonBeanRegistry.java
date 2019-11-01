@@ -110,22 +110,26 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	private final Set<String> inCreationCheckExclusions =
 			Collections.newSetFromMap(new ConcurrentHashMap<>(16));
+
 	/**
 	 * Disposable bean instances: bean name to disposable instance.
 	 * 已经销毁的单实例 bean 的     beanName 和 instance 的映射关系集
 	 *
 	 */
 	private final Map<String, Object> disposableBeans = new LinkedHashMap<>();
+
 	/**
 	 * Map between containing bean names: bean name to Set of bean names that the bean contains.
 	 */
 	private final Map<String, Set<String>> containedBeanMap = new ConcurrentHashMap<>(16);
+
 	/**
 	 * Map between dependent bean names: bean name to Set of dependent bean names.
 	 * key 为 依赖者
 	 * value 为 被key 所依赖的对象
 	 */
 	private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
+
 	/**
 	 * Map between depending bean names: bean name to Set of bean names for the bean's dependencies.
 	 * key 为被依赖者
@@ -133,12 +137,14 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 *
 	 */
 	private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
+
 	/**
 	 * List of suppressed Exceptions, available for associating related causes.
 	 * 这个记录方法调用链出现的异常
 	 */
 	@Nullable
 	private Set<Exception> suppressedExceptions;
+
 	/**
 	 * Flag that indicates whether we're currently within destroySingletons.
 	 * 1. refresh 异常的时候
@@ -146,7 +152,6 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * 3. refresh的时候
 	 */
 	private boolean singletonsCurrentlyInDestruction = false;
-
 
 	@Override
 	public void registerSingleton(String beanName, Object singletonObject) throws IllegalStateException {
@@ -466,6 +471,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 *
 	 * Register a dependent bean for the given bean,
 	 * to be destroyed before the given bean is destroyed.
 	 *
@@ -476,7 +482,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	public void registerDependentBean(String beanName, String dependentBeanName) {
 		String canonicalName = canonicalName(beanName);
 
-		//  dependentBeanMap key被value 引用依赖
+
+		// dependentBeanMap 存放的key 为 依赖的对象 name、 value 为被依赖的对象 name
 		synchronized (this.dependentBeanMap) {
 			Set<String> dependentBeans =
 					this.dependentBeanMap.computeIfAbsent(canonicalName, k -> new LinkedHashSet<>(8));
@@ -485,6 +492,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			}
 		}
 
+		//
 		synchronized (this.dependenciesForBeanMap) {
 			Set<String> dependenciesForBean =
 					this.dependenciesForBeanMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>(8));
