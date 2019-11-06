@@ -59,6 +59,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 
 
 	/**
+	 * 创建一个 基于注解配置的 上下文环境 、创建的时候需要填充 BeanDefinitionRegistry(bean定义 注册器) 给 reader 和 scanner
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
@@ -146,6 +147,8 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	//---------------------------------------------------------------------
 
 	/**
+	 *  注册一个或多个将要被处理的 组件 class
+	 *  必须调用  refresh 方法 让上下文 去处理新加入的组件类
 	 * Register one or more component classes to be processed.
 	 * <p>Note that {@link #refresh()} must be called in order for the context
 	 * to fully process the new classes.

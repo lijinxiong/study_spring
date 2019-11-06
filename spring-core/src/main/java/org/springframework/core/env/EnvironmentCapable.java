@@ -17,6 +17,7 @@
 package org.springframework.core.env;
 
 /**
+ * 表明这个 组件 拥有并且暴露除一个 Environment 引用
  * Interface indicating a component that contains and exposes an {@link Environment} reference.
  *
  * <p>All Spring application contexts are EnvironmentCapable, and the interface is used primarily

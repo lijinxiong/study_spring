@@ -54,6 +54,9 @@ public class AnnotatedBeanDefinitionReader {
 
 	private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
 
+	/**
+	 * 判断 {@link Condition 注解}
+	 */
 	private ConditionEvaluator conditionEvaluator;
 
 
@@ -126,6 +129,8 @@ public class AnnotatedBeanDefinitionReader {
 
 
 	/**
+	 * 注册一个或多个 将要被处理的 组件 class
+	 *  每次调用 register 方法是幂等的、多次register 同一个类不会有啥影响
 	 * Register one or more component classes to be processed.
 	 * <p>Calls to {@code register} are idempotent; adding the same
 	 * component class more than once has no additional effect.
@@ -139,6 +144,7 @@ public class AnnotatedBeanDefinitionReader {
 	}
 
 	/**
+	 * 从参数给的 config class 中 获取 要注册的bean、并从 得到bean的元数据
 	 * Register a bean from the given bean class, deriving its metadata from
 	 * class-declared annotations.
 	 * @param beanClass the class of the bean
@@ -234,6 +240,7 @@ public class AnnotatedBeanDefinitionReader {
 	}
 
 	/**
+	 *
 	 * Register a bean from the given bean class, deriving its metadata from
 	 * class-declared annotations.
 	 * @param beanClass the class of the bean
@@ -242,8 +249,10 @@ public class AnnotatedBeanDefinitionReader {
 	 * (may be {@code null})
 	 * @param qualifiers specific qualifier annotations to consider, if any,
 	 * in addition to qualifiers at the bean class level
+	 *                   限定符
 	 * @param customizers one or more callbacks for customizing the factory's
 	 * {@link BeanDefinition}, e.g. setting a lazy-init or primary flag
+	 *                    定制化 BeanDefinition
 	 * @since 5.0
 	 */
 	private <T> void doRegisterBean(Class<T> beanClass, @Nullable String name,
@@ -251,13 +260,19 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
+
+		// 解释这个 beanClass 中注解 Condition
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
 
+		// 设置一个回调把 其实就是一个 bean 对象的提供者
 		abd.setInstanceSupplier(supplier);
+
+		// 获取这个bean 的scope 数据
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
+
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
@@ -274,6 +289,7 @@ public class AnnotatedBeanDefinitionReader {
 				}
 			}
 		}
+
 		if (customizers != null) {
 			for (BeanDefinitionCustomizer customizer : customizers) {
 				customizer.customize(abd);
@@ -281,7 +297,9 @@ public class AnnotatedBeanDefinitionReader {
 		}
 
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		// 看是否需要创建代理
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 

@@ -20,6 +20,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.util.Assert;
 
 /**
+ * 描述被spring 管理的bean的 scope 包括scope 的名字 以及 scope-proxy 的行为
+ *
+ *
  * Describes scope characteristics for a Spring-managed bean including the scope
  * name and the scoped-proxy behavior.
  *
